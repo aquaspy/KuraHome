@@ -1,0 +1,32 @@
+<dialog class="confirm-dialog form-dialog" data-dialog-target="stackBox" data-action="click->dialog#backdrop">
+  <p class="dialog-heading" data-dialog-target="stackHeading"><%= t("app.add_stack_item") %></p>
+  <%= form_with url: stack_items_path, method: :post, class: "auth-form", data: { dialog_target: "stackForm" } do %>
+    <input type="hidden" name="_method" value="post" data-dialog-target="stackMethod">
+    <input type="hidden" name="stack_item[profile_id]" value="<%= @profile.id %>">
+    <label><%= t("app.stack_category") %>
+      <%= text_field_tag "stack_item[category]", nil, maxlength: 60, autocomplete: "off", placeholder: t("app.stack_category_placeholder") %>
+    </label>
+    <label><%= t("app.stack_choice") %>
+      <%= text_field_tag "stack_item[choice]", nil, maxlength: 80, autocomplete: "off", placeholder: t("app.stack_choice_placeholder") %>
+    </label>
+    <label><%= t("app.stack_origin") %>
+      <%= text_field_tag "stack_item[origin]", nil, maxlength: 80, autocomplete: "off", placeholder: t("app.stack_origin_placeholder") %>
+    </label>
+    <label><%= t("app.stack_note") %>
+      <%= text_field_tag "stack_item[note]", nil, maxlength: 160, autocomplete: "off", placeholder: t("app.stack_note_placeholder") %>
+    </label>
+    <label><%= t("app.url") %>
+      <%= text_field_tag "stack_item[url]", nil, maxlength: 2048, inputmode: "url", autocomplete: "off", placeholder: t("app.stack_url_placeholder") %>
+    </label>
+    <label><%= t("app.icon") %>
+      <%= text_field_tag "stack_item[icon_url]", nil, maxlength: 2048, inputmode: "url", autocomplete: "off", placeholder: t("app.icon_placeholder") %>
+    </label>
+    <div class="confirm-actions">
+      <button type="button" class="btn-dialog" data-action="dialog#closeStack"><%= t("app.cancel") %></button>
+      <%= submit_tag t("app.save"), class: "btn-dialog primary" %>
+    </div>
+  <% end %>
+  <div data-dialog-target="stackDelete" hidden>
+    <%= button_to t("app.delete"), "#", method: :delete, class: "btn-dialog danger dialog-delete", form: { data: { turbo_confirm: t("js.delete_stack_confirm") } } %>
+  </div>
+</dialog>

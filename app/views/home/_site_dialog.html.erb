@@ -1,0 +1,26 @@
+<dialog class="confirm-dialog form-dialog" data-dialog-target="siteBox" data-action="click->dialog#backdrop">
+  <p class="dialog-heading" data-dialog-target="siteHeading"><%= t("app.add_site") %></p>
+  <%= form_with url: sites_path, method: :post, class: "auth-form", data: { dialog_target: "siteForm" } do %>
+    <input type="hidden" name="_method" value="post" data-dialog-target="siteMethod">
+    <input type="hidden" name="site[profile_id]" value="<%= @profile.id %>">
+    <label><%= t("app.title") %>
+      <%= text_field_tag "site[title]", nil, maxlength: 80, autocomplete: "off" %>
+    </label>
+    <label><%= t("app.url") %>
+      <%= text_field_tag "site[url]", nil, maxlength: 2048, inputmode: "url", autocomplete: "off", placeholder: t("app.url_placeholder") %>
+    </label>
+    <label><%= t("app.hint") %>
+      <%= text_field_tag "site[hint]", nil, maxlength: 120, autocomplete: "off", placeholder: t("app.hint_placeholder") %>
+    </label>
+    <label><%= t("app.icon") %>
+      <%= text_field_tag "site[icon_url]", nil, maxlength: 2048, inputmode: "url", autocomplete: "off", placeholder: t("app.icon_placeholder") %>
+    </label>
+    <div class="confirm-actions">
+      <button type="button" class="btn-dialog" data-action="dialog#closeSite"><%= t("app.cancel") %></button>
+      <%= submit_tag t("app.save"), class: "btn-dialog primary" %>
+    </div>
+  <% end %>
+  <div data-dialog-target="siteDelete" hidden>
+    <%= button_to t("app.delete"), "#", method: :delete, class: "btn-dialog danger dialog-delete", form: { data: { turbo_confirm: t("js.delete_site_confirm") } } %>
+  </div>
+</dialog>

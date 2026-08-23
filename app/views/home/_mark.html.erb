@@ -1,0 +1,7 @@
+<% size = local_assigns.fetch(:size, "lg") %>
+<span class="mark mark-<%= size %>" style="background: <%= record.color %>">
+  <% if record.icon_src.present? %>
+    <img src="<%= record.icon_src %>" alt="" class="mark-favicon" data-controller="favicon" data-action="load->favicon#show error->favicon#hide">
+  <% end %>
+  <span class="mark-letter"><%= record.letter %></span>
+</span>

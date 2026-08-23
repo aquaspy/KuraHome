@@ -1,0 +1,166 @@
+en:
+  pwa:
+    description: "A quiet homepage for the sites you actually open."
+  titles:
+    app: "KuraHome"
+    login: "Sign in · KuraHome"
+    signup: "Create account · KuraHome"
+    password: "Change password · KuraHome"
+    lock: "Unlock · KuraHome"
+    stack: "My stack · KuraHome"
+  auth:
+    sign_in: "Sign in"
+    sign_in_lede: "Your home lives on this server. Sign in to open it."
+    email: "Email"
+    password: "Password"
+    confirm_password: "Confirm password"
+    current_password: "Current password"
+    new_password: "New password"
+    confirm_new_password: "Confirm new password"
+    change_password: "Change password"
+    change_password_lede: "The new password is used to sign in and to unlock the app."
+    password_changed: "Password changed."
+    no_account: "No account?"
+    create_one: "Create one"
+    create_account: "Create account"
+    signup_lede: "There is no password recovery. If you lose it, ask whoever runs the server."
+    have_account: "Already have an account?"
+    theme: "Theme"
+    too_many: "Too many attempts. Wait a moment."
+    signup_closed: "New accounts are turned off on this server."
+  app:
+    unlock: "Unlock"
+    unlock_lede: "Signed in as %{email}. Enter your password to show your home."
+    lock: "Lock"
+    auto_lock_on: "Turn on auto lock"
+    auto_lock_off: "Turn off auto lock"
+    sign_out: "Sign out"
+    cancel: "Cancel"
+    delete: "Delete"
+    save: "Save"
+    more: "More"
+    offline: "You're offline. You can open this home, but changes won't save."
+    default_profile: "Personal"
+    last_profile: "Keep at least one profile."
+    add_site: "Add a site"
+    add_profile: "Add a profile"
+    edit_site: "Edit site"
+    edit_profile: "Rename profile"
+    empty_title: "Nothing here yet"
+    empty_lede: "Add the sites you actually open. College, work, the two or three you hit every day."
+    title: "Name"
+    url: "Address"
+    hint: "Note"
+    hint_placeholder: "Optional. Shown under the name."
+    url_placeholder: "faculdade.edu.br"
+    profile_name: "Profile name"
+    profile_placeholder: "Work, personal, college…"
+    views: "Views"
+    sites_view: "Sites"
+    stack_view: "Stack"
+    stack_title: "My stack"
+    stack_lede: "What you actually use. Not a wishlist."
+    stack_empty_title: "No stack yet"
+    stack_empty_lede: "Music, browser, VPN, the registrar. One line each: what it is, where it comes from, and why it stayed."
+    add_stack_item: "Add a line"
+    edit_stack_item: "Edit line"
+    stack_category: "Category"
+    stack_choice: "Choice"
+    stack_origin: "Origin"
+    stack_note: "Note"
+    stack_category_placeholder: "Music, browser, email…"
+    stack_choice_placeholder: "Tidal, Brave, Mailcow…"
+    stack_origin_placeholder: "USA / Norway"
+    stack_note_placeholder: "Why this one."
+    stack_url_placeholder: "Optional link"
+    icon: "Icon"
+    icon_placeholder: "Optional. Blank uses the site’s favicon."
+    share_stack: "Share image"
+  js:
+    invalid_credentials: "Invalid email or password."
+    wrong_password: "Wrong password."
+    theme_system: "Theme: system"
+    theme_light: "Theme: light"
+    theme_dark: "Theme: dark"
+    theme_switch: "click to switch"
+    morning: "Good morning"
+    afternoon: "Good afternoon"
+    evening: "Good evening"
+    search_ddg: "DuckDuckGo"
+    search_startpage: "Startpage"
+    search_kagi: "Kagi"
+    search_google: "Google"
+    search_brave: "Brave"
+    search_placeholder: "Search the web"
+    edit: "Edit"
+    done: "Done"
+    delete_site_confirm: "Remove this site?"
+    delete_profile_confirm: "Delete this profile and every site in it?"
+    delete_stack_confirm: "Remove this line?"
+    add_profile: "Add a profile"
+  helpers:
+    submit:
+      profile:
+        create: "Add profile"
+        update: "Save"
+      site:
+        create: "Add site"
+        update: "Save"
+  activerecord:
+    attributes:
+      user:
+        password: "Password"
+        password_confirmation: "Password confirmation"
+      profile:
+        name: "Name"
+      site:
+        title: "Name"
+        url: "Address"
+        hint: "Note"
+        icon_url: "Icon"
+      stack_item:
+        category: "Category"
+        choice: "Choice"
+        origin: "Origin"
+        note: "Note"
+        url: "Address"
+        icon_url: "Icon"
+    errors:
+      models:
+        user:
+          attributes:
+            password:
+              too_short: "is too short (minimum is %{count} characters)"
+              blank: "can't be blank"
+            password_confirmation:
+              confirmation: "doesn't match password"
+        profile:
+          attributes:
+            name:
+              taken: "is already used"
+              blank: "can't be blank"
+            base:
+              too_many_profiles: "Twelve profiles is enough."
+        site:
+          attributes:
+            url:
+              invalid: "needs to be a web address"
+              blank: "can't be blank"
+            title:
+              blank: "can't be blank"
+            icon_url:
+              invalid: "needs to be a web address"
+            base:
+              too_many_sites: "Sixty sites on this profile is enough."
+        stack_item:
+          attributes:
+            category:
+              blank: "can't be blank"
+            choice:
+              blank: "can't be blank"
+            url:
+              invalid: "needs to be a web address"
+            icon_url:
+              invalid: "needs to be a web address"
+            base:
+              too_many_stack_items: "Eighty lines on this stack is enough."

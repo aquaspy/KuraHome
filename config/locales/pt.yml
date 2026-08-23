@@ -1,0 +1,166 @@
+pt:
+  pwa:
+    description: "Uma homepage calma para os sites que você realmente abre."
+  titles:
+    app: "KuraHome"
+    login: "Entrar · KuraHome"
+    signup: "Criar conta · KuraHome"
+    password: "Mudar senha · KuraHome"
+    lock: "Desbloquear · KuraHome"
+    stack: "Meu stack · KuraHome"
+  auth:
+    sign_in: "Entrar"
+    sign_in_lede: "Sua home fica neste servidor. Entre para abri-la."
+    email: "Email"
+    password: "Senha"
+    confirm_password: "Confirmar senha"
+    current_password: "Senha atual"
+    new_password: "Nova senha"
+    confirm_new_password: "Confirmar nova senha"
+    change_password: "Mudar senha"
+    change_password_lede: "A senha nova vale para entrar e para desbloquear o app."
+    password_changed: "Senha alterada."
+    no_account: "Sem conta?"
+    create_one: "Criar uma"
+    create_account: "Criar conta"
+    signup_lede: "Não existe recuperação de senha. Se perder, peça a quem administra o servidor."
+    have_account: "Já tem conta?"
+    theme: "Tema"
+    too_many: "Muitas tentativas. Espere um pouco."
+    signup_closed: "Novas contas estão desligadas neste servidor."
+  app:
+    unlock: "Desbloquear"
+    unlock_lede: "Conectado como %{email}. Digite a senha para ver sua home."
+    lock: "Bloquear"
+    auto_lock_on: "Ligar bloqueio automático"
+    auto_lock_off: "Desligar bloqueio automático"
+    sign_out: "Sair"
+    cancel: "Cancelar"
+    delete: "Apagar"
+    save: "Salvar"
+    more: "Mais"
+    offline: "Você está offline. Pode ver esta home, mas não salvar."
+    default_profile: "Pessoal"
+    last_profile: "Deixe pelo menos um perfil."
+    add_site: "Adicionar site"
+    add_profile: "Adicionar perfil"
+    edit_site: "Editar site"
+    edit_profile: "Renomear perfil"
+    empty_title: "Nada aqui ainda"
+    empty_lede: "Coloque os sites que você realmente abre. Faculdade, trabalho, os dois ou três de todo dia."
+    title: "Nome"
+    url: "Endereço"
+    hint: "Nota"
+    hint_placeholder: "Opcional. Aparece abaixo do nome."
+    url_placeholder: "faculdade.edu.br"
+    profile_name: "Nome do perfil"
+    profile_placeholder: "Trabalho, pessoal, faculdade…"
+    views: "Vistas"
+    sites_view: "Sites"
+    stack_view: "Stack"
+    stack_title: "Meu stack"
+    stack_lede: "O que você realmente usa. Não é wishlist."
+    stack_empty_title: "Nenhum stack ainda"
+    stack_empty_lede: "Música, browser, VPN, o registrar. Uma linha cada: o que é, de onde vem, e por que ficou."
+    add_stack_item: "Adicionar linha"
+    edit_stack_item: "Editar linha"
+    stack_category: "Categoria"
+    stack_choice: "Escolha"
+    stack_origin: "Origem"
+    stack_note: "Observação"
+    stack_category_placeholder: "Música, browser, email…"
+    stack_choice_placeholder: "Tidal, Brave, Mailcow…"
+    stack_origin_placeholder: "EUA / Noruega"
+    stack_note_placeholder: "Por que este."
+    stack_url_placeholder: "Link opcional"
+    icon: "Ícone"
+    icon_placeholder: "Opcional. Vazio usa o favicon do site."
+    share_stack: "Compartilhar imagem"
+  js:
+    invalid_credentials: "Email ou senha inválidos."
+    wrong_password: "Senha incorreta."
+    theme_system: "Tema: sistema"
+    theme_light: "Tema: claro"
+    theme_dark: "Tema: escuro"
+    theme_switch: "clique para alternar"
+    morning: "Bom dia"
+    afternoon: "Boa tarde"
+    evening: "Boa noite"
+    search_ddg: "DuckDuckGo"
+    search_startpage: "Startpage"
+    search_kagi: "Kagi"
+    search_google: "Google"
+    search_brave: "Brave"
+    search_placeholder: "Buscar na web"
+    edit: "Editar"
+    done: "Pronto"
+    delete_site_confirm: "Remover este site?"
+    delete_profile_confirm: "Apagar este perfil e todos os sites dele?"
+    delete_stack_confirm: "Remover esta linha?"
+    add_profile: "Adicionar perfil"
+  helpers:
+    submit:
+      profile:
+        create: "Adicionar perfil"
+        update: "Salvar"
+      site:
+        create: "Adicionar site"
+        update: "Salvar"
+  activerecord:
+    attributes:
+      user:
+        password: "Senha"
+        password_confirmation: "Confirmação da senha"
+      profile:
+        name: "Nome"
+      site:
+        title: "Nome"
+        url: "Endereço"
+        hint: "Nota"
+        icon_url: "Ícone"
+      stack_item:
+        category: "Categoria"
+        choice: "Escolha"
+        origin: "Origem"
+        note: "Observação"
+        url: "Endereço"
+        icon_url: "Ícone"
+    errors:
+      models:
+        user:
+          attributes:
+            password:
+              too_short: "é muito curta (mínimo de %{count} caracteres)"
+              blank: "não pode ficar em branco"
+            password_confirmation:
+              confirmation: "não confere com a senha"
+        profile:
+          attributes:
+            name:
+              taken: "já está em uso"
+              blank: "não pode ficar em branco"
+            base:
+              too_many_profiles: "Doze perfis bastam."
+        site:
+          attributes:
+            url:
+              invalid: "precisa ser um endereço da web"
+              blank: "não pode ficar em branco"
+            title:
+              blank: "não pode ficar em branco"
+            icon_url:
+              invalid: "precisa ser um endereço da web"
+            base:
+              too_many_sites: "Sessenta sites neste perfil bastam."
+        stack_item:
+          attributes:
+            category:
+              blank: "não pode ficar em branco"
+            choice:
+              blank: "não pode ficar em branco"
+            url:
+              invalid: "precisa ser um endereço da web"
+            icon_url:
+              invalid: "precisa ser um endereço da web"
+            base:
+              too_many_stack_items: "Oitenta linhas neste stack bastam."

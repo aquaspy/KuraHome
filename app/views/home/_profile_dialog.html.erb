@@ -1,0 +1,16 @@
+<dialog class="confirm-dialog form-dialog" data-dialog-target="profileBox" data-action="click->dialog#backdrop">
+  <p class="dialog-heading" data-dialog-target="profileHeading"><%= t("app.add_profile") %></p>
+  <%= form_with url: profiles_path, method: :post, class: "auth-form", data: { dialog_target: "profileForm" } do %>
+    <input type="hidden" name="_method" value="post" data-dialog-target="profileMethod">
+    <label><%= t("app.profile_name") %>
+      <%= text_field_tag "profile[name]", nil, maxlength: 40, autocomplete: "off", placeholder: t("app.profile_placeholder") %>
+    </label>
+    <div class="confirm-actions">
+      <button type="button" class="btn-dialog" data-action="dialog#closeProfile"><%= t("app.cancel") %></button>
+      <%= submit_tag t("app.save"), class: "btn-dialog primary" %>
+    </div>
+  <% end %>
+  <div data-dialog-target="profileDelete" hidden>
+    <%= button_to t("app.delete"), "#", method: :delete, class: "btn-dialog danger dialog-delete", form: { data: { turbo_confirm: t("js.delete_profile_confirm") } } %>
+  </div>
+</dialog>
