@@ -1,36 +1,41 @@
 # KuraHome
 
-A quiet homepage as a Rails 8 PWA. One SQLite file, no Redis.
+**The first tab of the day — without the noise.**
 
-Add the sites you actually open. Split them into profiles (personal, work, college). Several people can have accounts on the same server.
+KuraHome is a quiet homepage PWA. Add the sites you actually open. Split them into profiles (personal, work, college). Keep a **Stack** of what you use — tools, services, the boring infrastructure of a life online — and share a PNG card of it when you want. Several people can have accounts on the same server. One SQLite file. No Redis.
 
-**Stack** is a table of what you actually use — category, choice, origin, a note, optional link. Share image downloads a PNG card of that profile’s stack.
+---
 
-Tiles and stack rows pick a favicon from the site (DuckDuckGo). Leave the icon field blank for that, or paste any image URL. If the fetch fails, the letter mark stays.
+## Philosophy
 
-This is not a status dashboard. No ping, no widgets, no iframes. Tiles, a stack, a search box, and a lock.
+Start pages and “new tab” products love widgets: weather, stocks, RSS, status lights, iframes nested inside iframes. Useful for about a week. Then they become a second job.
 
-## Local
+KuraHome refuses that job.
 
-```bash
-bin/setup
-bin/dev
-```
+- **Tiles, not dashboards.** Links you chose, grouped how you think. Favicons when they help; a letter mark when they do not.
+- **Profiles as contexts.** Switch between “home” and “work” without mixing every bookmark into one anxious grid.
+- **Stack as memory.** A table of what you actually run — category, choice, origin, a note, optional link. Not a status board. A portrait of your setup.
+- **Search stays in the browser.** DuckDuckGo, Startpage, Kagi, Google, or Brave — cycled with a pill, remembered on the device (`localStorage`), never forced through your VPS.
+- **Same Kura calm.** Auth, idle lock, PWA, Compose on localhost. Your machine, your homepage.
 
-Open http://127.0.0.1:3000
+It belongs with [KuraNotes](https://github.com/aquaspy/KuraNotes), [KuraChat](https://github.com/aquaspy/KuraChat), [KuraCalendar](https://github.com/aquaspy/KuraCalendar), and [KuraSpend](https://github.com/aquaspy/KuraSpend). Separate app, separate volume — a homepage should not share a database with your notes or your spend.
 
-A `config/master.key` is created by `rails new` and is gitignored. Keep that file. If you cloned this repo and have no key:
+**This is not a status dashboard.** No ping, no widgets, no iframes. Tiles, a stack, a search box, and a lock.
 
-```bash
-rm -f config/credentials.yml.enc
-EDITOR=true bin/rails credentials:edit
-```
+---
 
-That writes a new `config/master.key`. Do not commit it.
+## What you get
 
-## VPS (Docker Compose)
+- Multi-user accounts; each person owns their profiles and tiles
+- Profiles with reorderable site tiles
+- Stack rows with optional share-image (PNG card per profile)
+- Favicon fetch via DuckDuckGo when the icon field is blank (paste any image URL to override)
+- Offline: reopen the home page and profiles you already opened; edits wait for the network
+- Sign-out wipes the offline cache
 
-On the server, with Docker installed:
+---
+
+## Self-host (Docker Compose)
 
 ```bash
 git clone https://github.com/aquaspy/KuraHome.git
@@ -38,14 +43,14 @@ cd KuraHome
 cp .env.example .env
 ```
 
-Edit `.env`. At minimum set:
+Edit `.env`. At minimum:
 
 ```bash
-SECRET_KEY_BASE=$(openssl rand -hex 64)   # paste the output into .env
+SECRET_KEY_BASE=          # paste: openssl rand -hex 64
 KURA_HOST=home.example.com
-SIGNUP_ENABLED=true                       # first account, then false
-FORCE_SSL=false                           # true once Caddy/nginx terminates HTTPS
-BIND=127.0.0.1:3000                       # use 127.0.0.1:3002 if Notes/Chat already took 3000
+SIGNUP_ENABLED=true       # first account, then false
+FORCE_SSL=false           # true once HTTPS terminates in front
+BIND=127.0.0.1:3000       # use 3002 if Notes/Chat already took 3000–3001
 ```
 
 Then:
@@ -54,10 +59,10 @@ Then:
 docker compose up -d --build
 ```
 
-Create the first account in the browser (http://127.0.0.1:3000), **or** from the shell:
+Create the first account in the browser (`http://127.0.0.1:3000`), or:
 
 ```bash
-docker compose exec web bin/rails kura:create EMAIL=you@x.com PASSWORD='at-least-8'
+docker compose exec web bin/rails kura:create EMAIL=you@example.com PASSWORD='at-least-8'
 ```
 
 Lock signup:
@@ -68,49 +73,24 @@ SIGNUP_ENABLED=false
 docker compose up -d
 ```
 
-`docker compose restart` does **not** reload `.env`. Use `up -d`.
+> **Important:** `docker compose restart` does **not** reload `.env`. Use `docker compose up -d`.
 
-### Secret
+### Secrets
 
 Pick **one**. You do not need both.
 
-**Compose (recommended on a VPS):**
+| Approach | When | How |
+| --- | --- | --- |
+| **`SECRET_KEY_BASE`** (recommended) | Compose / VPS | `openssl rand -hex 64` → `.env` |
+| **`RAILS_MASTER_KEY`** | Rails credentials | Regenerate with `EDITOR=true bin/rails credentials:edit`, put `config/master.key` in `.env` |
 
-```bash
-openssl rand -hex 64
-```
+Losing the key does not lose sites or the stack — only session cookies.
 
-Put the output in `.env` as `SECRET_KEY_BASE`. No `master.key` required.
+### Reverse proxy (Caddy or nginx)
 
-**Rails credentials** (if you already have a key, or want `rails credentials:edit`):
+Nothing is bundled. Point your proxy at `BIND`, set `FORCE_SSL=true`, then `docker compose up -d`.
 
-```bash
-rm -f config/credentials.yml.enc
-EDITOR=true bin/rails credentials:edit
-cat config/master.key
-```
-
-Put that value in `.env` as `RAILS_MASTER_KEY`. A random hex will not decrypt the `credentials.yml.enc` that ships in git — generate a new pair as above, or use `SECRET_KEY_BASE` instead.
-
-Losing the key does not lose sites or the stack. It only invalidates session cookies. Generate a new one and users sign in again.
-
-### Users on the server
-
-Same rake tasks as KuraNotes:
-
-```bash
-docker compose exec web bin/rails kura:users
-docker compose exec web bin/rails kura:create EMAIL=you@x.com PASSWORD='at-least-8'
-docker compose exec web bin/rails kura:password EMAIL=you@x.com PASSWORD='new-secret'
-```
-
-`kura:password` is the admin reset. There is no email recovery.
-
-### Proxy (Caddy or nginx)
-
-Nothing is bundled. The app listens on `127.0.0.1:3000` and does not bind 80/443. Point your own Caddy or nginx at that address, set `FORCE_SSL=true` in `.env`, then `docker compose up -d`.
-
-Caddy:
+**Caddy:**
 
 ```
 home.example.com {
@@ -118,7 +98,7 @@ home.example.com {
 }
 ```
 
-nginx:
+**nginx:**
 
 ```
 location / {
@@ -131,26 +111,67 @@ location / {
 
 If `BIND` is `127.0.0.1:3002`, proxy to that port instead.
 
+### Users on the server
+
+No email recovery:
+
+```bash
+docker compose exec web bin/rails kura:users
+docker compose exec web bin/rails kura:create EMAIL=you@example.com PASSWORD='at-least-8'
+docker compose exec web bin/rails kura:password EMAIL=you@example.com PASSWORD='new-secret'
+```
+
 ### Backup
 
-Sites and the stack live in the `kura_home_data` volume (`storage/production.sqlite3`). Back that up.
+Sites and the stack live in the `kura_home_data` volume (`storage/production.sqlite3`).
 
 ```bash
 docker compose exec web tar -C /rails/storage -cf - . > kurahome-backup.tar
 ```
 
-Offline, the PWA can reopen the home page and any profile you already opened while online. Adding or editing a site waits until you are back. Sign out wipes the cache so a second person on the same browser cannot read the previous user’s home offline.
+### Shared browsers
 
-Shared browsers: Sign out **and** wait for the cache wipe.
+Sign out **and** wait for the cache wipe.
 
-The search box talks to DuckDuckGo, Startpage, Kagi, Google, or Brave in the browser. Cycle the engine with the pill on the right. That choice stays on the device (`localStorage`), not the server.
+---
 
-## Keys
+## Local development
 
-| Env | What |
+```bash
+bin/setup
+bin/dev
+```
+
+Open http://127.0.0.1:3000
+
+If you cloned without a `master.key`:
+
+```bash
+rm -f config/credentials.yml.enc
+EDITOR=true bin/rails credentials:edit
+```
+
+Do not commit `config/master.key`.
+
+---
+
+## Environment
+
+| Variable | What it does |
 | --- | --- |
 | `SECRET_KEY_BASE` | Session cookies (Compose). `openssl rand -hex 64` |
-| `SIGNUP_ENABLED` | Public signup form. Turn off after the first account |
+| `SIGNUP_ENABLED` | Public signup. Turn off after the first account |
 | `FORCE_SSL` | `true` when Caddy/nginx terminates HTTPS |
 | `KURA_HOST` | Public hostname |
 | `BIND` | Default `127.0.0.1:3000` |
+
+---
+
+## Sister apps
+
+| App | Role |
+| --- | --- |
+| [KuraNotes](https://github.com/aquaspy/KuraNotes) | Private notes |
+| [KuraChat](https://github.com/aquaspy/KuraChat) | Private chat with Grok |
+| [KuraCalendar](https://github.com/aquaspy/KuraCalendar) | Personal calendar & birthdays |
+| [KuraSpend](https://github.com/aquaspy/KuraSpend) | Subscriptions & daily spend |
