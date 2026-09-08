@@ -16,7 +16,7 @@ KuraHome refuses that job.
 - **Profiles as contexts.** Switch between “home” and “work” without mixing every bookmark into one anxious grid.
 - **Stack as memory.** A table of what you actually run — category, choice, origin, a note, optional link. Not a status board. A portrait of your setup.
 - **Search stays in the browser.** DuckDuckGo, Startpage, Kagi, Google, or Brave — cycled with a pill, remembered on the device (`localStorage`), never forced through your VPS.
-- **Same Kura calm.** Auth, idle lock, PWA, Compose on localhost. Your machine, your homepage.
+- **Same Kura calm.** Auth, idle lock (per device), PWA, Compose on localhost. Your machine, your homepage.
 
 It belongs with [KuraNotes](https://github.com/aquaspy/KuraNotes), [KuraChat](https://github.com/aquaspy/KuraChat), [KuraCalendar](https://github.com/aquaspy/KuraCalendar), and [KuraSpend](https://github.com/aquaspy/KuraSpend). Separate app, separate volume — a homepage should not share a database with your notes or your spend.
 

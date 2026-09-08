@@ -148,9 +148,8 @@ class HomeFlowTest < ActionDispatch::IntegrationTest
     assert_equal "[FILTERED]", filtered["name"]
   end
 
-  test "auto lock is off by default and can be toggled" do
+  test "auto lock is off by default and is per-device via cookie" do
     login
-    assert_not @user.reload.auto_lock?
 
     get root_path
     assert_includes response.body, "Turn on auto lock"
@@ -161,9 +160,8 @@ class HomeFlowTest < ActionDispatch::IntegrationTest
       assert_response :success
     end
 
-    post auto_lock_path
-    follow_redirect!
-    assert @user.reload.auto_lock?
+    cookies[Locking::COOKIE_NAME] = "1"
+    get root_path
     assert_includes response.body, "Turn off auto lock"
 
     travel 20.minutes do
