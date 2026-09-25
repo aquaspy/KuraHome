@@ -1,183 +1,36 @@
-# KuraHome
+# KuraHome (Go)
 
-**The first tab of the day — without the noise.**
+A quiet homepage for the sites you actually open. Go port of the Rails app on `master`: chi + templ + htmx + SQLite, no build step beyond `templ generate` and the Tailwind CLI.
 
-KuraHome is a quiet homepage PWA. Add the sites you actually open. Split them into profiles (personal, work, college). Keep a **Stack** of what you use — tools, services, the boring infrastructure of a life online — and share a PNG card of it when you want. Several people can have accounts on the same server. One SQLite file. No Redis.
+## Run
 
----
-
-## Philosophy
-
-Start pages and “new tab” products love widgets: weather, stocks, RSS, status lights, iframes nested inside iframes. Useful for about a week. Then they become a second job.
-
-KuraHome refuses that job.
-
-- **Tiles, not dashboards.** Links you chose, grouped how you think. Favicons when they help; a letter mark when they do not.
-- **Profiles as contexts.** Switch between “home” and “work” without mixing every bookmark into one anxious grid.
-- **Stack as memory.** A table of what you actually run — category, choice, origin, a note, optional link. Not a status board. A portrait of your setup.
-- **Search stays in the browser.** DuckDuckGo, Startpage, Kagi, Google, or Brave — cycled with a pill, remembered on the device (`localStorage`), never forced through your VPS.
-- **Same Kura calm.** Auth, idle lock (per device), PWA, Compose on localhost. Your machine, your homepage.
-
-It belongs with [KuraNotes](https://github.com/aquaspy/KuraNotes), [KuraChat](https://github.com/aquaspy/KuraChat), [KuraCalendar](https://github.com/aquaspy/KuraCalendar), and [KuraSpend](https://github.com/aquaspy/KuraSpend). Separate app, separate volume — a homepage should not share a database with your notes or your spend.
-
-**This is not a status dashboard.** No ping, no widgets, no iframes. Tiles, a stack, a search box, and a lock.
-
----
-
-## What you get
-
-- Multi-user accounts; each person owns their profiles and tiles
-- Profiles with reorderable site tiles
-- Stack rows with optional share-image (PNG card per profile)
-- Favicon fetch via DuckDuckGo when the icon field is blank (paste any image URL to override)
-- Offline: reopen the home page and profiles you already opened; edits wait for the network
-- Sign-out wipes the offline cache
-
----
-
-## Self-host (Docker Compose)
-
-```bash
-git clone https://github.com/aquaspy/KuraHome.git
-cd KuraHome
-cp .env.example .env
+```sh
+cp .env.example .env   # then edit KURA_HOST
+go run ./cmd/kurahome serve
 ```
 
-Edit `.env`. At minimum:
+Or with Docker:
 
-```bash
-SECRET_KEY_BASE=          # paste: openssl rand -hex 64
-KURA_HOST=home.example.com
-SIGNUP_ENABLED=true       # first account, then false
-FORCE_SSL=false           # true once HTTPS terminates in front
-BIND=127.0.0.1:3000       # use 3002 if Notes/Chat already took 3000–3001
-```
-
-Then:
-
-```bash
+```sh
 docker compose up -d --build
 ```
 
-Create the first account in the browser (`http://127.0.0.1:3000`), or:
+Environment: `BIND` (default `127.0.0.1:3000`), `DATA_DIR` (default `storage`), `KURA_HOST` (comma-separated, empty only while testing), `SIGNUP_ENABLED` (default true), `FORCE_SSL` (default false).
 
-```bash
-docker compose exec web bin/rails kura:create EMAIL=you@example.com PASSWORD='at-least-8'
+## Develop
+
+```sh
+templ generate
+tailwindcss --input web/static/css/input.css --output web/static/css/app.css
+go run ./cmd/kurahome serve
 ```
 
-Lock signup:
+Subcommands: `serve` (default), `users`, `create` (`EMAIL=`/`PASSWORD=`), `password` (`EMAIL=`/`PASSWORD=`).
 
-```bash
-# in .env
-SIGNUP_ENABLED=false
-docker compose up -d
+## Test
+
+```sh
+gofmt -l cmd internal
+go vet ./...
+go test ./...
 ```
-
-> **Important:** `docker compose restart` does **not** reload `.env`. Use `docker compose up -d`.
-
-### Secrets
-
-Pick **one**. You do not need both.
-
-| Approach | When | How |
-| --- | --- | --- |
-| **`SECRET_KEY_BASE`** (recommended) | Compose / VPS | `openssl rand -hex 64` → `.env` |
-| **`RAILS_MASTER_KEY`** | Rails credentials | Regenerate with `EDITOR=true bin/rails credentials:edit`, put `config/master.key` in `.env` |
-
-Losing the key does not lose sites or the stack — only session cookies.
-
-### Reverse proxy (Caddy or nginx)
-
-Nothing is bundled. Point your proxy at `BIND`, set `FORCE_SSL=true`, then `docker compose up -d`.
-
-**Caddy:**
-
-```
-home.example.com {
-  reverse_proxy 127.0.0.1:3000
-}
-```
-
-**nginx:**
-
-```
-location / {
-  proxy_pass http://127.0.0.1:3000;
-  proxy_http_version 1.1;
-  proxy_set_header Host $host;
-  proxy_set_header X-Forwarded-Proto $scheme;
-}
-```
-
-If `BIND` is `127.0.0.1:3002`, proxy to that port instead.
-
-### Users on the server
-
-No email recovery:
-
-```bash
-docker compose exec web bin/rails kura:users
-docker compose exec web bin/rails kura:create EMAIL=you@example.com PASSWORD='at-least-8'
-docker compose exec web bin/rails kura:password EMAIL=you@example.com PASSWORD='new-secret'
-```
-
-### Backup
-
-Sites and the stack live in the `kura_home_data` volume (`storage/production.sqlite3`).
-
-```bash
-docker compose exec web tar -C /rails/storage -cf - . > kurahome-backup.tar
-```
-
-### Shared browsers
-
-Sign out **and** wait for the cache wipe.
-
-### Runtime (queue & YJIT)
-
-Solid Queue is **off** here. This app has no durable background jobs, so production Active Job uses the in-process `:async` adapter and Compose does not set `SOLID_QUEUE_IN_PUMA`. That keeps the extra queue processes from sitting in RAM. [KuraChat](https://github.com/aquaspy/KuraChat) still runs Solid Queue for completion jobs.
-
-YJIT stays **on**. Rails 8.1 enables it in production via `config.yjit`; the image also sets `RUBY_YJIT_ENABLE=1`. Leave it on — the CPU win is worth the modest RSS on a personal box.
-
----
-
-## Local development
-
-```bash
-bin/setup
-bin/dev
-```
-
-Open http://127.0.0.1:3000
-
-If you cloned without a `master.key`:
-
-```bash
-rm -f config/credentials.yml.enc
-EDITOR=true bin/rails credentials:edit
-```
-
-Do not commit `config/master.key`.
-
----
-
-## Environment
-
-| Variable | What it does |
-| --- | --- |
-| `SECRET_KEY_BASE` | Session cookies (Compose). `openssl rand -hex 64` |
-| `SIGNUP_ENABLED` | Public signup. Turn off after the first account |
-| `FORCE_SSL` | `true` when Caddy/nginx terminates HTTPS |
-| `KURA_HOST` | Public hostname |
-| `BIND` | Default `127.0.0.1:3000` |
-
----
-
-## Sister apps
-
-| App | Role |
-| --- | --- |
-| [KuraNotes](https://github.com/aquaspy/KuraNotes) | Private notes |
-| [KuraChat](https://github.com/aquaspy/KuraChat) | Private chat with Grok |
-| [KuraCalendar](https://github.com/aquaspy/KuraCalendar) | Personal calendar & birthdays |
-| [KuraSpend](https://github.com/aquaspy/KuraSpend) | Subscriptions & daily spend |
